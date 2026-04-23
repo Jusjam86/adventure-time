@@ -3,7 +3,10 @@ package com.pluralsight;
 import java.io.*;
 import java.util.*;
 
+
 public class AdventureTime {
+
+    static Scanner userInput = new Scanner(System.in);
 
     static ArrayList<StepClass> adventureSteps;
 
@@ -16,36 +19,82 @@ public class AdventureTime {
 
     public static void homeScreen() {
 
-        Scanner userInput = new Scanner(System.in);
-
         System.out.println("Welcome to Adventure Time.");
         System.out.println("----------------------------------------");
         System.out.println("Press (P) to play ");
         System.out.println("Press (Q) to quit ");
         System.out.println("===========================");
         System.out.println("Your choice: ");
+
         String choice = userInput.nextLine().toUpperCase().trim();
         if (choice.equals("P")) {
             gameScreen(1);
 
         }
+        else if (choice.equals("Q")){
+            System.out.println("Exiting game.");
+
+        }
+
     }
 
+
     public static void gameScreen(int id) {
-        for (int i = 0; i < adventureSteps.size(); i++){
-            StepClass step = adventureSteps.get(i);
-            if (step.getId() == id){
+
+        // 1 - finding the step
+        int nextId = id;
+
+        while (nextId != -1) {
+
+            StepClass step = findStepClass(nextId);
+
+            if (step == null) {
+
+                System.out.println();
+                System.out.println("An error has occurred. Step was not found.");
+
+            }
+            else
+            {
+                // 2 - display the step info
+                System.out.println();
                 System.out.println("Story Text: " + step.getStoryText());
                 System.out.println();
                 System.out.println("1) " + step.getOption1Text());
+                System.out.println("2) " + step.getOption2Text());
                 System.out.println();
-                System.out.print("2) " + step.getOption2Text());
-                System.out.println();
+                System.out.print("Make a selection: ");
+                String optionSelect = userInput.nextLine().strip().toLowerCase();
 
+                switch (optionSelect) {
+                    case "1":
+                        nextId = step.getOption1NextId();
+                        break;
+                    case "2":
+                        nextId = step.getOption2NextId();
+                        break;
+
+                }
+
+            }
+        }
+    }
+
+    public static StepClass findStepClass(int id) {
+
+        // gets arraylist size
+        for (int i = 0; i < adventureSteps.size(); i++)
+        {
+            StepClass stepClass = adventureSteps.get(i);
+            if (stepClass.getId() == id) {
+
+                return stepClass;
             }
 
         }
+        return null;
     }
+
 
     public static ArrayList<StepClass> loadAdventureTime(){
 
